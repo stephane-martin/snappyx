@@ -37,22 +37,22 @@ extensions = [
 name = 'snappyx'
 version = '0.5'
 description = 'A simple Cython wrapper for the snappy compression library'
-author = 'Stephane Martin',
-author_email = 'stephane.martin_github@vesperal.eu',
-url = 'https://github.com/stephane-martin/snappyx',
+author = 'Stephane Martin'
+author_email = 'stephane.martin_github@vesperal.eu'
+url = 'https://github.com/stephane-martin/snappyx'
 licens = "see LICENSE file"
 keywords = 'python snappy compression'
 data_files = []
 
 classifiers = [
-    'Development Status   :: 4 - Beta',
+    'Development Status :: 4 - Beta',
     'Programming Language :: C++',
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
     'Programming Language :: Cython',
-    'Operating System     :: POSIX',
+    'Operating System :: POSIX',
     'Topic :: Software Development :: Libraries',
-    'Topic :: System :: Archiving  :: Compression'
+    'Topic :: System :: Archiving :: Compression'
 
 ]
 
@@ -110,7 +110,8 @@ def runsetup():
         classifiers=classifiers,
         entry_points=entry_points,
         data_files=data_files,
-        ext_modules=extensions
+        ext_modules=extensions,
+
     )
 
 
