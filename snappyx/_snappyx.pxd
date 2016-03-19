@@ -9,7 +9,7 @@ from libcpp cimport bool as cpp_bool
 from cpython.ref cimport PyObject
 
 cdef extern from "Python.h":
-    int PyByteArray_Resize(PyObject* ba, Py_ssize_t l)
+    int PyByteArray_Resize(object ba, Py_ssize_t l)
 
 cdef extern from "snappy-sinksource.h" namespace "snappy" nogil:
 

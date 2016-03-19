@@ -584,6 +584,10 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object);
 static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
+#ifndef __PYX_FORCE_INIT_THREADS
+  #define __PYX_FORCE_INIT_THREADS 0
+#endif
+
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
@@ -653,10 +657,10 @@ static char __pyx_k_ValueError[] = "ValueError";
 static char __pyx_k_MemoryError[] = "MemoryError";
 static char __pyx_k_RuntimeError[] = "RuntimeError";
 static char __pyx_k_PyObject_GetBuffer_failed[] = "PyObject_GetBuffer failed";
-static char __pyx_k_error_while_uncompressing[] = "error while uncompressing";
-static char __pyx_k_invalid_compressed_buffer[] = "invalid compressed buffer";
 static char __pyx_k_compressed_does_not_support_the[] = "compressed does not support the buffer interface";
 static char __pyx_k_inpt_does_not_support_the_buffer[] = "inpt does not support the buffer interface";
+static char __pyx_k_message_looks_corrupted_in_RawUn[] = "message looks corrupted in RawUncompress";
+static char __pyx_k_parsing_error_in_GetUncompressed[] = "parsing error in GetUncompressedLength";
 static char __pyx_k_unicode_objects_are_not_accepted[] = "unicode objects are not accepted";
 static PyObject *__pyx_n_s_MemoryError;
 static PyObject *__pyx_kp_s_PyObject_GetBuffer_failed;
@@ -665,10 +669,10 @@ static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_n_s_ValueError;
 static PyObject *__pyx_kp_b__2;
 static PyObject *__pyx_kp_s_compressed_does_not_support_the;
-static PyObject *__pyx_kp_s_error_while_uncompressing;
 static PyObject *__pyx_kp_s_inpt_does_not_support_the_buffer;
-static PyObject *__pyx_kp_s_invalid_compressed_buffer;
 static PyObject *__pyx_n_s_main;
+static PyObject *__pyx_kp_s_message_looks_corrupted_in_RawUn;
+static PyObject *__pyx_kp_s_parsing_error_in_GetUncompressed;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_kp_s_unicode_objects_are_not_accepted;
 static PyObject *__pyx_pf_7snappyx_8_snappyx_compress(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_inpt); /* proto */
@@ -692,9 +696,10 @@ static PyObject *__pyx_tuple__9;
 
 static PyObject *__pyx_pw_7snappyx_8_snappyx_1compress(PyObject *__pyx_self, PyObject *__pyx_v_inpt); /*proto*/
 static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  Py_buffer *__pyx_v_view;
-  int __pyx_v_res;
   size_t __pyx_v_compressed_length;
+  char *__pyx_v_c_output;
+  int __pyx_v_res;
+  Py_buffer *__pyx_v_view;
   PyObject *__pyx_v_output = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -717,9 +722,9 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("compress", 0);
 
-  /* "snappyx/_snappyx.pyx":25
- *         The compressed result
- *     """
+  /* "snappyx/_snappyx.pyx":30
+ *     cdef Py_buffer* view
+ * 
  *     if isinstance(inpt, unicode):             # <<<<<<<<<<<<<<
  *         raise TypeError("unicode objects are not accepted")
  *     if not inpt:
@@ -728,40 +733,40 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "snappyx/_snappyx.pyx":26
- *     """
+    /* "snappyx/_snappyx.pyx":31
+ * 
  *     if isinstance(inpt, unicode):
  *         raise TypeError("unicode objects are not accepted")             # <<<<<<<<<<<<<<
  *     if not inpt:
  *         return b''
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 26; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 26; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "snappyx/_snappyx.pyx":25
- *         The compressed result
- *     """
+    /* "snappyx/_snappyx.pyx":30
+ *     cdef Py_buffer* view
+ * 
  *     if isinstance(inpt, unicode):             # <<<<<<<<<<<<<<
  *         raise TypeError("unicode objects are not accepted")
  *     if not inpt:
  */
   }
 
-  /* "snappyx/_snappyx.pyx":27
+  /* "snappyx/_snappyx.pyx":32
  *     if isinstance(inpt, unicode):
  *         raise TypeError("unicode objects are not accepted")
  *     if not inpt:             # <<<<<<<<<<<<<<
  *         return b''
  *     if not PyObject_CheckBuffer(inpt):
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_inpt); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_inpt); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = ((!__pyx_t_2) != 0);
   if (__pyx_t_1) {
 
-    /* "snappyx/_snappyx.pyx":28
+    /* "snappyx/_snappyx.pyx":33
  *         raise TypeError("unicode objects are not accepted")
  *     if not inpt:
  *         return b''             # <<<<<<<<<<<<<<
@@ -773,7 +778,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
     __pyx_r = __pyx_kp_b__2;
     goto __pyx_L0;
 
-    /* "snappyx/_snappyx.pyx":27
+    /* "snappyx/_snappyx.pyx":32
  *     if isinstance(inpt, unicode):
  *         raise TypeError("unicode objects are not accepted")
  *     if not inpt:             # <<<<<<<<<<<<<<
@@ -782,88 +787,88 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
  */
   }
 
-  /* "snappyx/_snappyx.pyx":29
+  /* "snappyx/_snappyx.pyx":34
  *     if not inpt:
  *         return b''
  *     if not PyObject_CheckBuffer(inpt):             # <<<<<<<<<<<<<<
  *         raise TypeError("inpt does not support the buffer interface")
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  */
   __pyx_t_1 = ((!(PyObject_CheckBuffer(__pyx_v_inpt) != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "snappyx/_snappyx.pyx":30
+    /* "snappyx/_snappyx.pyx":35
  *         return b''
  *     if not PyObject_CheckBuffer(inpt):
  *         raise TypeError("inpt does not support the buffer interface")             # <<<<<<<<<<<<<<
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  *     if view == NULL:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "snappyx/_snappyx.pyx":29
+    /* "snappyx/_snappyx.pyx":34
  *     if not inpt:
  *         return b''
  *     if not PyObject_CheckBuffer(inpt):             # <<<<<<<<<<<<<<
  *         raise TypeError("inpt does not support the buffer interface")
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  */
   }
 
-  /* "snappyx/_snappyx.pyx":31
+  /* "snappyx/_snappyx.pyx":36
  *     if not PyObject_CheckBuffer(inpt):
  *         raise TypeError("inpt does not support the buffer interface")
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))             # <<<<<<<<<<<<<<
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))             # <<<<<<<<<<<<<<
  *     if view == NULL:
  *         raise MemoryError()
  */
   __pyx_v_view = ((Py_buffer *)PyMem_Malloc((sizeof(Py_buffer))));
 
-  /* "snappyx/_snappyx.pyx":32
+  /* "snappyx/_snappyx.pyx":37
  *         raise TypeError("inpt does not support the buffer interface")
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  *     if view == NULL:             # <<<<<<<<<<<<<<
  *         raise MemoryError()
- *     cdef int res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
+ *     res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
  */
   __pyx_t_1 = ((__pyx_v_view == NULL) != 0);
   if (__pyx_t_1) {
 
-    /* "snappyx/_snappyx.pyx":33
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+    /* "snappyx/_snappyx.pyx":38
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  *     if view == NULL:
  *         raise MemoryError()             # <<<<<<<<<<<<<<
- *     cdef int res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
+ *     res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
  *     if res == -1:
  */
-    PyErr_NoMemory(); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    PyErr_NoMemory(); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "snappyx/_snappyx.pyx":32
+    /* "snappyx/_snappyx.pyx":37
  *         raise TypeError("inpt does not support the buffer interface")
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  *     if view == NULL:             # <<<<<<<<<<<<<<
  *         raise MemoryError()
- *     cdef int res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
+ *     res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
  */
   }
 
-  /* "snappyx/_snappyx.pyx":34
+  /* "snappyx/_snappyx.pyx":39
  *     if view == NULL:
  *         raise MemoryError()
- *     cdef int res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)             # <<<<<<<<<<<<<<
+ *     res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)             # <<<<<<<<<<<<<<
  *     if res == -1:
  *         PyMem_Free(view)
  */
-  __pyx_t_4 = PyObject_GetBuffer(__pyx_v_inpt, __pyx_v_view, PyBUF_SIMPLE); if (unlikely(__pyx_t_4 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyObject_GetBuffer(__pyx_v_inpt, __pyx_v_view, PyBUF_SIMPLE); if (unlikely(__pyx_t_4 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_res = __pyx_t_4;
 
-  /* "snappyx/_snappyx.pyx":35
+  /* "snappyx/_snappyx.pyx":40
  *         raise MemoryError()
- *     cdef int res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
+ *     res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
  *     if res == -1:             # <<<<<<<<<<<<<<
  *         PyMem_Free(view)
  *         raise RuntimeError("PyObject_GetBuffer failed")
@@ -871,48 +876,48 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
   __pyx_t_1 = ((__pyx_v_res == -1L) != 0);
   if (__pyx_t_1) {
 
-    /* "snappyx/_snappyx.pyx":36
- *     cdef int res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
+    /* "snappyx/_snappyx.pyx":41
+ *     res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
  *     if res == -1:
  *         PyMem_Free(view)             # <<<<<<<<<<<<<<
  *         raise RuntimeError("PyObject_GetBuffer failed")
- *     cdef size_t compressed_length
+ * 
  */
     PyMem_Free(__pyx_v_view);
 
-    /* "snappyx/_snappyx.pyx":37
+    /* "snappyx/_snappyx.pyx":42
  *     if res == -1:
  *         PyMem_Free(view)
  *         raise RuntimeError("PyObject_GetBuffer failed")             # <<<<<<<<<<<<<<
- *     cdef size_t compressed_length
+ * 
  *     try:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "snappyx/_snappyx.pyx":35
+    /* "snappyx/_snappyx.pyx":40
  *         raise MemoryError()
- *     cdef int res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
+ *     res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
  *     if res == -1:             # <<<<<<<<<<<<<<
  *         PyMem_Free(view)
  *         raise RuntimeError("PyObject_GetBuffer failed")
  */
   }
 
-  /* "snappyx/_snappyx.pyx":39
+  /* "snappyx/_snappyx.pyx":44
  *         raise RuntimeError("PyObject_GetBuffer failed")
- *     cdef size_t compressed_length
+ * 
  *     try:             # <<<<<<<<<<<<<<
  *         if view.len == 0:
  *             return b''
  */
   /*try:*/ {
 
-    /* "snappyx/_snappyx.pyx":40
- *     cdef size_t compressed_length
+    /* "snappyx/_snappyx.pyx":45
+ * 
  *     try:
  *         if view.len == 0:             # <<<<<<<<<<<<<<
  *             return b''
@@ -921,20 +926,20 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
     __pyx_t_1 = ((__pyx_v_view->len == 0) != 0);
     if (__pyx_t_1) {
 
-      /* "snappyx/_snappyx.pyx":41
+      /* "snappyx/_snappyx.pyx":46
  *     try:
  *         if view.len == 0:
  *             return b''             # <<<<<<<<<<<<<<
  *         output = bytearray(MaxCompressedLength(view.len))
- *         RawCompress(<char*> view.buf, <size_t> view.len, <char*> output, &compressed_length)
+ *         c_output = <char*> output
  */
       __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_kp_b__2);
       __pyx_r = __pyx_kp_b__2;
       goto __pyx_L8_return;
 
-      /* "snappyx/_snappyx.pyx":40
- *     cdef size_t compressed_length
+      /* "snappyx/_snappyx.pyx":45
+ * 
  *     try:
  *         if view.len == 0:             # <<<<<<<<<<<<<<
  *             return b''
@@ -942,48 +947,90 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
  */
     }
 
-    /* "snappyx/_snappyx.pyx":42
+    /* "snappyx/_snappyx.pyx":47
  *         if view.len == 0:
  *             return b''
  *         output = bytearray(MaxCompressedLength(view.len))             # <<<<<<<<<<<<<<
- *         RawCompress(<char*> view.buf, <size_t> view.len, <char*> output, &compressed_length)
- *         PyByteArray_Resize(<PyObject*> output, compressed_length)
+ *         c_output = <char*> output
+ *         with nogil:
  */
-    __pyx_t_3 = __Pyx_PyInt_FromSize_t(snappy::MaxCompressedLength(__pyx_v_view->len)); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __pyx_t_3 = __Pyx_PyInt_FromSize_t(snappy::MaxCompressedLength(__pyx_v_view->len)); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyByteArray_Type)), __pyx_t_5, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyByteArray_Type)), __pyx_t_5, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_output = ((PyObject*)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "snappyx/_snappyx.pyx":43
+    /* "snappyx/_snappyx.pyx":48
  *             return b''
  *         output = bytearray(MaxCompressedLength(view.len))
- *         RawCompress(<char*> view.buf, <size_t> view.len, <char*> output, &compressed_length)             # <<<<<<<<<<<<<<
- *         PyByteArray_Resize(<PyObject*> output, compressed_length)
+ *         c_output = <char*> output             # <<<<<<<<<<<<<<
+ *         with nogil:
+ *             RawCompress(<char*> view.buf, <size_t> view.len, c_output, &compressed_length)
+ */
+    __pyx_t_6 = __Pyx_PyObject_AsString(__pyx_v_output); if (unlikely((!__pyx_t_6) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __pyx_v_c_output = ((char *)__pyx_t_6);
+
+    /* "snappyx/_snappyx.pyx":49
+ *         output = bytearray(MaxCompressedLength(view.len))
+ *         c_output = <char*> output
+ *         with nogil:             # <<<<<<<<<<<<<<
+ *             RawCompress(<char*> view.buf, <size_t> view.len, c_output, &compressed_length)
+ *         PyByteArray_Resize(output, compressed_length)
+ */
+    {
+        #ifdef WITH_THREAD
+        PyThreadState *_save;
+        Py_UNBLOCK_THREADS
+        #endif
+        /*try:*/ {
+
+          /* "snappyx/_snappyx.pyx":50
+ *         c_output = <char*> output
+ *         with nogil:
+ *             RawCompress(<char*> view.buf, <size_t> view.len, c_output, &compressed_length)             # <<<<<<<<<<<<<<
+ *         PyByteArray_Resize(output, compressed_length)
  *         return output
  */
-    __pyx_t_6 = __Pyx_PyObject_AsString(__pyx_v_output); if (unlikely((!__pyx_t_6) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
-    snappy::RawCompress(((char *)__pyx_v_view->buf), ((size_t)__pyx_v_view->len), ((char *)__pyx_t_6), (&__pyx_v_compressed_length));
+          snappy::RawCompress(((char *)__pyx_v_view->buf), ((size_t)__pyx_v_view->len), __pyx_v_c_output, (&__pyx_v_compressed_length));
+        }
 
-    /* "snappyx/_snappyx.pyx":44
+        /* "snappyx/_snappyx.pyx":49
  *         output = bytearray(MaxCompressedLength(view.len))
- *         RawCompress(<char*> view.buf, <size_t> view.len, <char*> output, &compressed_length)
- *         PyByteArray_Resize(<PyObject*> output, compressed_length)             # <<<<<<<<<<<<<<
+ *         c_output = <char*> output
+ *         with nogil:             # <<<<<<<<<<<<<<
+ *             RawCompress(<char*> view.buf, <size_t> view.len, c_output, &compressed_length)
+ *         PyByteArray_Resize(output, compressed_length)
+ */
+        /*finally:*/ {
+          /*normal exit:*/{
+            #ifdef WITH_THREAD
+            Py_BLOCK_THREADS
+            #endif
+            goto __pyx_L14;
+          }
+          __pyx_L14:;
+        }
+    }
+
+    /* "snappyx/_snappyx.pyx":51
+ *         with nogil:
+ *             RawCompress(<char*> view.buf, <size_t> view.len, c_output, &compressed_length)
+ *         PyByteArray_Resize(output, compressed_length)             # <<<<<<<<<<<<<<
  *         return output
  *     finally:
  */
-    PyByteArray_Resize(((PyObject *)__pyx_v_output), __pyx_v_compressed_length);
+    PyByteArray_Resize(__pyx_v_output, __pyx_v_compressed_length);
 
-    /* "snappyx/_snappyx.pyx":45
- *         RawCompress(<char*> view.buf, <size_t> view.len, <char*> output, &compressed_length)
- *         PyByteArray_Resize(<PyObject*> output, compressed_length)
+    /* "snappyx/_snappyx.pyx":52
+ *             RawCompress(<char*> view.buf, <size_t> view.len, c_output, &compressed_length)
+ *         PyByteArray_Resize(output, compressed_length)
  *         return output             # <<<<<<<<<<<<<<
  *     finally:
  *         PyBuffer_Release(view)
@@ -994,7 +1041,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
     goto __pyx_L8_return;
   }
 
-  /* "snappyx/_snappyx.pyx":47
+  /* "snappyx/_snappyx.pyx":54
  *         return output
  *     finally:
  *         PyBuffer_Release(view)             # <<<<<<<<<<<<<<
@@ -1019,7 +1066,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
       {
         PyBuffer_Release(__pyx_v_view);
 
-        /* "snappyx/_snappyx.pyx":48
+        /* "snappyx/_snappyx.pyx":55
  *     finally:
  *         PyBuffer_Release(view)
  *         PyMem_Free(view)             # <<<<<<<<<<<<<<
@@ -1046,7 +1093,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
       __pyx_t_14 = __pyx_r;
       __pyx_r = 0;
 
-      /* "snappyx/_snappyx.pyx":47
+      /* "snappyx/_snappyx.pyx":54
  *         return output
  *     finally:
  *         PyBuffer_Release(view)             # <<<<<<<<<<<<<<
@@ -1055,7 +1102,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_compress(PyObject *__pyx_v_inpt, CYT
  */
       PyBuffer_Release(__pyx_v_view);
 
-      /* "snappyx/_snappyx.pyx":48
+      /* "snappyx/_snappyx.pyx":55
  *     finally:
  *         PyBuffer_Release(view)
  *         PyMem_Free(view)             # <<<<<<<<<<<<<<
@@ -1130,7 +1177,7 @@ static PyObject *__pyx_pf_7snappyx_8_snappyx_compress(CYTHON_UNUSED PyObject *__
   return __pyx_r;
 }
 
-/* "snappyx/_snappyx.pyx":51
+/* "snappyx/_snappyx.pyx":58
  * 
  * 
  * cpdef decompress(object compressed):             # <<<<<<<<<<<<<<
@@ -1141,10 +1188,12 @@ static PyObject *__pyx_pf_7snappyx_8_snappyx_compress(CYTHON_UNUSED PyObject *__
 static PyObject *__pyx_pw_7snappyx_8_snappyx_3decompress(PyObject *__pyx_self, PyObject *__pyx_v_compressed); /*proto*/
 static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compressed, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_res;
+  bool __pyx_v_bres;
   size_t __pyx_v_uncompressed_length;
   size_t __pyx_v_compressed_length;
   char *__pyx_v_compressed_buf;
   Py_buffer *__pyx_v_view;
+  char *__pyx_v_c_output;
   PyObject *__pyx_v_output = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -1168,8 +1217,8 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("decompress", 0);
 
-  /* "snappyx/_snappyx.pyx":71
- *     cdef char* compressed_buf
+  /* "snappyx/_snappyx.pyx":81
+ *     cdef char* c_output
  * 
  *     if isinstance(compressed, unicode):             # <<<<<<<<<<<<<<
  *         raise TypeError("unicode objects are not accepted")
@@ -1179,21 +1228,21 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "snappyx/_snappyx.pyx":72
+    /* "snappyx/_snappyx.pyx":82
  * 
  *     if isinstance(compressed, unicode):
  *         raise TypeError("unicode objects are not accepted")             # <<<<<<<<<<<<<<
  *     if not compressed:
  *         return b''
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "snappyx/_snappyx.pyx":71
- *     cdef char* compressed_buf
+    /* "snappyx/_snappyx.pyx":81
+ *     cdef char* c_output
  * 
  *     if isinstance(compressed, unicode):             # <<<<<<<<<<<<<<
  *         raise TypeError("unicode objects are not accepted")
@@ -1201,18 +1250,18 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
  */
   }
 
-  /* "snappyx/_snappyx.pyx":73
+  /* "snappyx/_snappyx.pyx":83
  *     if isinstance(compressed, unicode):
  *         raise TypeError("unicode objects are not accepted")
  *     if not compressed:             # <<<<<<<<<<<<<<
  *         return b''
  *     if not PyObject_CheckBuffer(compressed):
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_compressed); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_compressed); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = ((!__pyx_t_2) != 0);
   if (__pyx_t_1) {
 
-    /* "snappyx/_snappyx.pyx":74
+    /* "snappyx/_snappyx.pyx":84
  *         raise TypeError("unicode objects are not accepted")
  *     if not compressed:
  *         return b''             # <<<<<<<<<<<<<<
@@ -1224,7 +1273,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
     __pyx_r = __pyx_kp_b__2;
     goto __pyx_L0;
 
-    /* "snappyx/_snappyx.pyx":73
+    /* "snappyx/_snappyx.pyx":83
  *     if isinstance(compressed, unicode):
  *         raise TypeError("unicode objects are not accepted")
  *     if not compressed:             # <<<<<<<<<<<<<<
@@ -1233,50 +1282,50 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
  */
   }
 
-  /* "snappyx/_snappyx.pyx":75
+  /* "snappyx/_snappyx.pyx":85
  *     if not compressed:
  *         return b''
  *     if not PyObject_CheckBuffer(compressed):             # <<<<<<<<<<<<<<
  *         raise TypeError("compressed does not support the buffer interface")
- *     cdef string uncompressed
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  */
   __pyx_t_1 = ((!(PyObject_CheckBuffer(__pyx_v_compressed) != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "snappyx/_snappyx.pyx":76
+    /* "snappyx/_snappyx.pyx":86
  *         return b''
  *     if not PyObject_CheckBuffer(compressed):
  *         raise TypeError("compressed does not support the buffer interface")             # <<<<<<<<<<<<<<
- *     cdef string uncompressed
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     if view == NULL:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "snappyx/_snappyx.pyx":75
+    /* "snappyx/_snappyx.pyx":85
  *     if not compressed:
  *         return b''
  *     if not PyObject_CheckBuffer(compressed):             # <<<<<<<<<<<<<<
  *         raise TypeError("compressed does not support the buffer interface")
- *     cdef string uncompressed
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  */
   }
 
-  /* "snappyx/_snappyx.pyx":78
+  /* "snappyx/_snappyx.pyx":87
+ *     if not PyObject_CheckBuffer(compressed):
  *         raise TypeError("compressed does not support the buffer interface")
- *     cdef string uncompressed
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))             # <<<<<<<<<<<<<<
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))             # <<<<<<<<<<<<<<
  *     if view == NULL:
  *         raise MemoryError()
  */
   __pyx_v_view = ((Py_buffer *)PyMem_Malloc((sizeof(Py_buffer))));
 
-  /* "snappyx/_snappyx.pyx":79
- *     cdef string uncompressed
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+  /* "snappyx/_snappyx.pyx":88
+ *         raise TypeError("compressed does not support the buffer interface")
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  *     if view == NULL:             # <<<<<<<<<<<<<<
  *         raise MemoryError()
  *     res = PyObject_GetBuffer(compressed, view, PyBUF_SIMPLE)
@@ -1284,35 +1333,35 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
   __pyx_t_1 = ((__pyx_v_view == NULL) != 0);
   if (__pyx_t_1) {
 
-    /* "snappyx/_snappyx.pyx":80
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+    /* "snappyx/_snappyx.pyx":89
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  *     if view == NULL:
  *         raise MemoryError()             # <<<<<<<<<<<<<<
  *     res = PyObject_GetBuffer(compressed, view, PyBUF_SIMPLE)
  *     if res == -1:
  */
-    PyErr_NoMemory(); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    PyErr_NoMemory(); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "snappyx/_snappyx.pyx":79
- *     cdef string uncompressed
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+    /* "snappyx/_snappyx.pyx":88
+ *         raise TypeError("compressed does not support the buffer interface")
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  *     if view == NULL:             # <<<<<<<<<<<<<<
  *         raise MemoryError()
  *     res = PyObject_GetBuffer(compressed, view, PyBUF_SIMPLE)
  */
   }
 
-  /* "snappyx/_snappyx.pyx":81
+  /* "snappyx/_snappyx.pyx":90
  *     if view == NULL:
  *         raise MemoryError()
  *     res = PyObject_GetBuffer(compressed, view, PyBUF_SIMPLE)             # <<<<<<<<<<<<<<
  *     if res == -1:
  *         PyMem_Free(view)
  */
-  __pyx_t_4 = PyObject_GetBuffer(__pyx_v_compressed, __pyx_v_view, PyBUF_SIMPLE); if (unlikely(__pyx_t_4 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyObject_GetBuffer(__pyx_v_compressed, __pyx_v_view, PyBUF_SIMPLE); if (unlikely(__pyx_t_4 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_res = __pyx_t_4;
 
-  /* "snappyx/_snappyx.pyx":82
+  /* "snappyx/_snappyx.pyx":91
  *         raise MemoryError()
  *     res = PyObject_GetBuffer(compressed, view, PyBUF_SIMPLE)
  *     if res == -1:             # <<<<<<<<<<<<<<
@@ -1322,7 +1371,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
   __pyx_t_1 = ((__pyx_v_res == -1L) != 0);
   if (__pyx_t_1) {
 
-    /* "snappyx/_snappyx.pyx":83
+    /* "snappyx/_snappyx.pyx":92
  *     res = PyObject_GetBuffer(compressed, view, PyBUF_SIMPLE)
  *     if res == -1:
  *         PyMem_Free(view)             # <<<<<<<<<<<<<<
@@ -1331,20 +1380,20 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
  */
     PyMem_Free(__pyx_v_view);
 
-    /* "snappyx/_snappyx.pyx":84
+    /* "snappyx/_snappyx.pyx":93
  *     if res == -1:
  *         PyMem_Free(view)
  *         raise RuntimeError("PyObject_GetBuffer failed")             # <<<<<<<<<<<<<<
  *     try:
  *         compressed_buf = <char*> view.buf
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "snappyx/_snappyx.pyx":82
+    /* "snappyx/_snappyx.pyx":91
  *         raise MemoryError()
  *     res = PyObject_GetBuffer(compressed, view, PyBUF_SIMPLE)
  *     if res == -1:             # <<<<<<<<<<<<<<
@@ -1353,7 +1402,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
  */
   }
 
-  /* "snappyx/_snappyx.pyx":85
+  /* "snappyx/_snappyx.pyx":94
  *         PyMem_Free(view)
  *         raise RuntimeError("PyObject_GetBuffer failed")
  *     try:             # <<<<<<<<<<<<<<
@@ -1362,138 +1411,188 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
  */
   /*try:*/ {
 
-    /* "snappyx/_snappyx.pyx":86
+    /* "snappyx/_snappyx.pyx":95
  *         raise RuntimeError("PyObject_GetBuffer failed")
  *     try:
  *         compressed_buf = <char*> view.buf             # <<<<<<<<<<<<<<
  *         compressed_length = view.len
- *         if IsValidCompressedBuffer(compressed_buf, compressed_length):
+ * 
  */
     __pyx_v_compressed_buf = ((char *)__pyx_v_view->buf);
 
-    /* "snappyx/_snappyx.pyx":87
+    /* "snappyx/_snappyx.pyx":96
  *     try:
  *         compressed_buf = <char*> view.buf
  *         compressed_length = view.len             # <<<<<<<<<<<<<<
- *         if IsValidCompressedBuffer(compressed_buf, compressed_length):
- *             GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
+ * 
+ *         bres = GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
  */
     __pyx_t_5 = __pyx_v_view->len;
     __pyx_v_compressed_length = __pyx_t_5;
 
-    /* "snappyx/_snappyx.pyx":88
- *         compressed_buf = <char*> view.buf
+    /* "snappyx/_snappyx.pyx":98
  *         compressed_length = view.len
- *         if IsValidCompressedBuffer(compressed_buf, compressed_length):             # <<<<<<<<<<<<<<
- *             GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
- *             output = bytearray(uncompressed_length)
+ * 
+ *         bres = GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)             # <<<<<<<<<<<<<<
+ *         if not bres:
+ *             raise ValueError("parsing error in GetUncompressedLength")
  */
-    __pyx_t_1 = (snappy::IsValidCompressedBuffer(__pyx_v_compressed_buf, __pyx_v_compressed_length) != 0);
+    __pyx_v_bres = snappy::GetUncompressedLength(__pyx_v_compressed_buf, __pyx_v_compressed_length, (&__pyx_v_uncompressed_length));
+
+    /* "snappyx/_snappyx.pyx":99
+ * 
+ *         bres = GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
+ *         if not bres:             # <<<<<<<<<<<<<<
+ *             raise ValueError("parsing error in GetUncompressedLength")
+ *         output = bytearray(uncompressed_length)
+ */
+    __pyx_t_1 = ((!(__pyx_v_bres != 0)) != 0);
     if (__pyx_t_1) {
 
-      /* "snappyx/_snappyx.pyx":89
- *         compressed_length = view.len
- *         if IsValidCompressedBuffer(compressed_buf, compressed_length):
- *             GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)             # <<<<<<<<<<<<<<
- *             output = bytearray(uncompressed_length)
- *             if RawUncompress(compressed_buf, compressed_length, <char*> output):
+      /* "snappyx/_snappyx.pyx":100
+ *         bres = GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
+ *         if not bres:
+ *             raise ValueError("parsing error in GetUncompressedLength")             # <<<<<<<<<<<<<<
+ *         output = bytearray(uncompressed_length)
+ *         c_output = <char*> output
  */
-      snappy::GetUncompressedLength(__pyx_v_compressed_buf, __pyx_v_compressed_length, (&__pyx_v_uncompressed_length));
-
-      /* "snappyx/_snappyx.pyx":90
- *         if IsValidCompressedBuffer(compressed_buf, compressed_length):
- *             GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
- *             output = bytearray(uncompressed_length)             # <<<<<<<<<<<<<<
- *             if RawUncompress(compressed_buf, compressed_length, <char*> output):
- *                 return output
- */
-      __pyx_t_3 = __Pyx_PyInt_FromSize_t(__pyx_v_uncompressed_length); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_GIVEREF(__pyx_t_3);
-      PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_3);
-      __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyByteArray_Type)), __pyx_t_6, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_v_output = ((PyObject*)__pyx_t_3);
-      __pyx_t_3 = 0;
-
-      /* "snappyx/_snappyx.pyx":91
- *             GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
- *             output = bytearray(uncompressed_length)
- *             if RawUncompress(compressed_buf, compressed_length, <char*> output):             # <<<<<<<<<<<<<<
- *                 return output
- *             raise RuntimeError("error while uncompressing")
- */
-      __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_v_output); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
-      __pyx_t_1 = (snappy::RawUncompress(__pyx_v_compressed_buf, __pyx_v_compressed_length, ((char *)__pyx_t_7)) != 0);
-      if (__pyx_t_1) {
-
-        /* "snappyx/_snappyx.pyx":92
- *             output = bytearray(uncompressed_length)
- *             if RawUncompress(compressed_buf, compressed_length, <char*> output):
- *                 return output             # <<<<<<<<<<<<<<
- *             raise RuntimeError("error while uncompressing")
- *         raise ValueError("invalid compressed buffer")
- */
-        __Pyx_XDECREF(__pyx_r);
-        __Pyx_INCREF(__pyx_v_output);
-        __pyx_r = __pyx_v_output;
-        goto __pyx_L8_return;
-
-        /* "snappyx/_snappyx.pyx":91
- *             GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
- *             output = bytearray(uncompressed_length)
- *             if RawUncompress(compressed_buf, compressed_length, <char*> output):             # <<<<<<<<<<<<<<
- *                 return output
- *             raise RuntimeError("error while uncompressing")
- */
-      }
-
-      /* "snappyx/_snappyx.pyx":93
- *             if RawUncompress(compressed_buf, compressed_length, <char*> output):
- *                 return output
- *             raise RuntimeError("error while uncompressing")             # <<<<<<<<<<<<<<
- *         raise ValueError("invalid compressed buffer")
- *     finally:
- */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
 
-      /* "snappyx/_snappyx.pyx":88
- *         compressed_buf = <char*> view.buf
- *         compressed_length = view.len
- *         if IsValidCompressedBuffer(compressed_buf, compressed_length):             # <<<<<<<<<<<<<<
- *             GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
- *             output = bytearray(uncompressed_length)
+      /* "snappyx/_snappyx.pyx":99
+ * 
+ *         bres = GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
+ *         if not bres:             # <<<<<<<<<<<<<<
+ *             raise ValueError("parsing error in GetUncompressedLength")
+ *         output = bytearray(uncompressed_length)
  */
     }
 
-    /* "snappyx/_snappyx.pyx":94
- *                 return output
- *             raise RuntimeError("error while uncompressing")
- *         raise ValueError("invalid compressed buffer")             # <<<<<<<<<<<<<<
- *     finally:
- *         PyBuffer_Release(view)
+    /* "snappyx/_snappyx.pyx":101
+ *         if not bres:
+ *             raise ValueError("parsing error in GetUncompressedLength")
+ *         output = bytearray(uncompressed_length)             # <<<<<<<<<<<<<<
+ *         c_output = <char*> output
+ *         with nogil:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __pyx_t_3 = __Pyx_PyInt_FromSize_t(__pyx_v_uncompressed_length); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GIVEREF(__pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_3);
+    __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyByteArray_Type)), __pyx_t_6, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_v_output = ((PyObject*)__pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "snappyx/_snappyx.pyx":102
+ *             raise ValueError("parsing error in GetUncompressedLength")
+ *         output = bytearray(uncompressed_length)
+ *         c_output = <char*> output             # <<<<<<<<<<<<<<
+ *         with nogil:
+ *             bres = RawUncompress(compressed_buf, compressed_length, c_output)
+ */
+    __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_v_output); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+    __pyx_v_c_output = ((char *)__pyx_t_7);
+
+    /* "snappyx/_snappyx.pyx":103
+ *         output = bytearray(uncompressed_length)
+ *         c_output = <char*> output
+ *         with nogil:             # <<<<<<<<<<<<<<
+ *             bres = RawUncompress(compressed_buf, compressed_length, c_output)
+ *         if not bres:
+ */
+    {
+        #ifdef WITH_THREAD
+        PyThreadState *_save;
+        Py_UNBLOCK_THREADS
+        #endif
+        /*try:*/ {
+
+          /* "snappyx/_snappyx.pyx":104
+ *         c_output = <char*> output
+ *         with nogil:
+ *             bres = RawUncompress(compressed_buf, compressed_length, c_output)             # <<<<<<<<<<<<<<
+ *         if not bres:
+ *             raise ValueError("message looks corrupted in RawUncompress")
+ */
+          __pyx_v_bres = snappy::RawUncompress(__pyx_v_compressed_buf, __pyx_v_compressed_length, __pyx_v_c_output);
+        }
+
+        /* "snappyx/_snappyx.pyx":103
+ *         output = bytearray(uncompressed_length)
+ *         c_output = <char*> output
+ *         with nogil:             # <<<<<<<<<<<<<<
+ *             bres = RawUncompress(compressed_buf, compressed_length, c_output)
+ *         if not bres:
+ */
+        /*finally:*/ {
+          /*normal exit:*/{
+            #ifdef WITH_THREAD
+            Py_BLOCK_THREADS
+            #endif
+            goto __pyx_L14;
+          }
+          __pyx_L14:;
+        }
+    }
+
+    /* "snappyx/_snappyx.pyx":105
+ *         with nogil:
+ *             bres = RawUncompress(compressed_buf, compressed_length, c_output)
+ *         if not bres:             # <<<<<<<<<<<<<<
+ *             raise ValueError("message looks corrupted in RawUncompress")
+ *         return output
+ */
+    __pyx_t_1 = ((!(__pyx_v_bres != 0)) != 0);
+    if (__pyx_t_1) {
+
+      /* "snappyx/_snappyx.pyx":106
+ *             bres = RawUncompress(compressed_buf, compressed_length, c_output)
+ *         if not bres:
+ *             raise ValueError("message looks corrupted in RawUncompress")             # <<<<<<<<<<<<<<
+ *         return output
+ * 
+ */
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L9_error;}
+
+      /* "snappyx/_snappyx.pyx":105
+ *         with nogil:
+ *             bres = RawUncompress(compressed_buf, compressed_length, c_output)
+ *         if not bres:             # <<<<<<<<<<<<<<
+ *             raise ValueError("message looks corrupted in RawUncompress")
+ *         return output
+ */
+    }
+
+    /* "snappyx/_snappyx.pyx":107
+ *         if not bres:
+ *             raise ValueError("message looks corrupted in RawUncompress")
+ *         return output             # <<<<<<<<<<<<<<
+ * 
+ *     finally:
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_INCREF(__pyx_v_output);
+    __pyx_r = __pyx_v_output;
+    goto __pyx_L8_return;
   }
 
-  /* "snappyx/_snappyx.pyx":96
- *         raise ValueError("invalid compressed buffer")
+  /* "snappyx/_snappyx.pyx":110
+ * 
  *     finally:
  *         PyBuffer_Release(view)             # <<<<<<<<<<<<<<
  *         PyMem_Free(view)
- * 
  */
   /*finally:*/ {
     /*exception exit:*/{
@@ -1513,11 +1612,10 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
       {
         PyBuffer_Release(__pyx_v_view);
 
-        /* "snappyx/_snappyx.pyx":97
+        /* "snappyx/_snappyx.pyx":111
  *     finally:
  *         PyBuffer_Release(view)
  *         PyMem_Free(view)             # <<<<<<<<<<<<<<
- * 
  */
         PyMem_Free(__pyx_v_view);
       }
@@ -1539,20 +1637,18 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
       __pyx_t_15 = __pyx_r;
       __pyx_r = 0;
 
-      /* "snappyx/_snappyx.pyx":96
- *         raise ValueError("invalid compressed buffer")
+      /* "snappyx/_snappyx.pyx":110
+ * 
  *     finally:
  *         PyBuffer_Release(view)             # <<<<<<<<<<<<<<
  *         PyMem_Free(view)
- * 
  */
       PyBuffer_Release(__pyx_v_view);
 
-      /* "snappyx/_snappyx.pyx":97
+      /* "snappyx/_snappyx.pyx":111
  *     finally:
  *         PyBuffer_Release(view)
  *         PyMem_Free(view)             # <<<<<<<<<<<<<<
- * 
  */
       PyMem_Free(__pyx_v_view);
       __pyx_r = __pyx_t_15;
@@ -1561,7 +1657,7 @@ static PyObject *__pyx_f_7snappyx_8_snappyx_decompress(PyObject *__pyx_v_compres
     }
   }
 
-  /* "snappyx/_snappyx.pyx":51
+  /* "snappyx/_snappyx.pyx":58
  * 
  * 
  * cpdef decompress(object compressed):             # <<<<<<<<<<<<<<
@@ -1605,7 +1701,7 @@ static PyObject *__pyx_pf_7snappyx_8_snappyx_2decompress(CYTHON_UNUSED PyObject 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("decompress", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7snappyx_8_snappyx_decompress(__pyx_v_compressed, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7snappyx_8_snappyx_decompress(__pyx_v_compressed, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1654,19 +1750,19 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
   {&__pyx_kp_b__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 0, 0},
   {&__pyx_kp_s_compressed_does_not_support_the, __pyx_k_compressed_does_not_support_the, sizeof(__pyx_k_compressed_does_not_support_the), 0, 0, 1, 0},
-  {&__pyx_kp_s_error_while_uncompressing, __pyx_k_error_while_uncompressing, sizeof(__pyx_k_error_while_uncompressing), 0, 0, 1, 0},
   {&__pyx_kp_s_inpt_does_not_support_the_buffer, __pyx_k_inpt_does_not_support_the_buffer, sizeof(__pyx_k_inpt_does_not_support_the_buffer), 0, 0, 1, 0},
-  {&__pyx_kp_s_invalid_compressed_buffer, __pyx_k_invalid_compressed_buffer, sizeof(__pyx_k_invalid_compressed_buffer), 0, 0, 1, 0},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
+  {&__pyx_kp_s_message_looks_corrupted_in_RawUn, __pyx_k_message_looks_corrupted_in_RawUn, sizeof(__pyx_k_message_looks_corrupted_in_RawUn), 0, 0, 1, 0},
+  {&__pyx_kp_s_parsing_error_in_GetUncompressed, __pyx_k_parsing_error_in_GetUncompressed, sizeof(__pyx_k_parsing_error_in_GetUncompressed), 0, 0, 1, 0},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_kp_s_unicode_objects_are_not_accepted, __pyx_k_unicode_objects_are_not_accepted, sizeof(__pyx_k_unicode_objects_are_not_accepted), 0, 0, 1, 0},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 26; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -1676,91 +1772,91 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "snappyx/_snappyx.pyx":26
- *     """
+  /* "snappyx/_snappyx.pyx":31
+ * 
  *     if isinstance(inpt, unicode):
  *         raise TypeError("unicode objects are not accepted")             # <<<<<<<<<<<<<<
  *     if not inpt:
  *         return b''
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_unicode_objects_are_not_accepted); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 26; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_unicode_objects_are_not_accepted); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "snappyx/_snappyx.pyx":30
+  /* "snappyx/_snappyx.pyx":35
  *         return b''
  *     if not PyObject_CheckBuffer(inpt):
  *         raise TypeError("inpt does not support the buffer interface")             # <<<<<<<<<<<<<<
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
  *     if view == NULL:
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_inpt_does_not_support_the_buffer); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_inpt_does_not_support_the_buffer); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "snappyx/_snappyx.pyx":37
+  /* "snappyx/_snappyx.pyx":42
  *     if res == -1:
  *         PyMem_Free(view)
  *         raise RuntimeError("PyObject_GetBuffer failed")             # <<<<<<<<<<<<<<
- *     cdef size_t compressed_length
+ * 
  *     try:
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_PyObject_GetBuffer_failed); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_PyObject_GetBuffer_failed); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "snappyx/_snappyx.pyx":72
+  /* "snappyx/_snappyx.pyx":82
  * 
  *     if isinstance(compressed, unicode):
  *         raise TypeError("unicode objects are not accepted")             # <<<<<<<<<<<<<<
  *     if not compressed:
  *         return b''
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_unicode_objects_are_not_accepted); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_unicode_objects_are_not_accepted); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
-  /* "snappyx/_snappyx.pyx":76
+  /* "snappyx/_snappyx.pyx":86
  *         return b''
  *     if not PyObject_CheckBuffer(compressed):
  *         raise TypeError("compressed does not support the buffer interface")             # <<<<<<<<<<<<<<
- *     cdef string uncompressed
- *     cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+ *     if view == NULL:
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_compressed_does_not_support_the); if (unlikely(!__pyx_tuple__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_compressed_does_not_support_the); if (unlikely(!__pyx_tuple__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
-  /* "snappyx/_snappyx.pyx":84
+  /* "snappyx/_snappyx.pyx":93
  *     if res == -1:
  *         PyMem_Free(view)
  *         raise RuntimeError("PyObject_GetBuffer failed")             # <<<<<<<<<<<<<<
  *     try:
  *         compressed_buf = <char*> view.buf
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_PyObject_GetBuffer_failed); if (unlikely(!__pyx_tuple__7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_PyObject_GetBuffer_failed); if (unlikely(!__pyx_tuple__7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__7);
   __Pyx_GIVEREF(__pyx_tuple__7);
 
-  /* "snappyx/_snappyx.pyx":93
- *             if RawUncompress(compressed_buf, compressed_length, <char*> output):
- *                 return output
- *             raise RuntimeError("error while uncompressing")             # <<<<<<<<<<<<<<
- *         raise ValueError("invalid compressed buffer")
- *     finally:
+  /* "snappyx/_snappyx.pyx":100
+ *         bres = GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
+ *         if not bres:
+ *             raise ValueError("parsing error in GetUncompressedLength")             # <<<<<<<<<<<<<<
+ *         output = bytearray(uncompressed_length)
+ *         c_output = <char*> output
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_error_while_uncompressing); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_parsing_error_in_GetUncompressed); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "snappyx/_snappyx.pyx":94
- *                 return output
- *             raise RuntimeError("error while uncompressing")
- *         raise ValueError("invalid compressed buffer")             # <<<<<<<<<<<<<<
- *     finally:
- *         PyBuffer_Release(view)
+  /* "snappyx/_snappyx.pyx":106
+ *             bres = RawUncompress(compressed_buf, compressed_length, c_output)
+ *         if not bres:
+ *             raise ValueError("message looks corrupted in RawUncompress")             # <<<<<<<<<<<<<<
+ *         return output
+ * 
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_invalid_compressed_buffer); if (unlikely(!__pyx_tuple__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_message_looks_corrupted_in_RawUn); if (unlikely(!__pyx_tuple__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
   __Pyx_RefNannyFinishContext();

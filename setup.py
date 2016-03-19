@@ -35,7 +35,7 @@ extensions = [
 ]
 
 name = 'snappyx'
-version = '0.5'
+version = '0.5.1'
 description = 'A simple Cython wrapper for the snappy compression library'
 author = 'Stephane Martin'
 author_email = 'stephane.martin_github@vesperal.eu'

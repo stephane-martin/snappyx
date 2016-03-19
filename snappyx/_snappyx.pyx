@@ -22,26 +22,33 @@ cpdef compress(object inpt):
     output: bytearray
         The compressed result
     """
+    cdef size_t compressed_length
+    cdef char* c_output
+    cdef int res
+    cdef Py_buffer* view
+
     if isinstance(inpt, unicode):
         raise TypeError("unicode objects are not accepted")
     if not inpt:
         return b''
     if not PyObject_CheckBuffer(inpt):
         raise TypeError("inpt does not support the buffer interface")
-    cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+    view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
     if view == NULL:
         raise MemoryError()
-    cdef int res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
+    res = PyObject_GetBuffer(inpt, view, PyBUF_SIMPLE)
     if res == -1:
         PyMem_Free(view)
         raise RuntimeError("PyObject_GetBuffer failed")
-    cdef size_t compressed_length
+
     try:
         if view.len == 0:
             return b''
         output = bytearray(MaxCompressedLength(view.len))
-        RawCompress(<char*> view.buf, <size_t> view.len, <char*> output, &compressed_length)
-        PyByteArray_Resize(<PyObject*> output, compressed_length)
+        c_output = <char*> output
+        with nogil:
+            RawCompress(<char*> view.buf, <size_t> view.len, c_output, &compressed_length)
+        PyByteArray_Resize(output, compressed_length)
         return output
     finally:
         PyBuffer_Release(view)
@@ -64,9 +71,12 @@ cpdef decompress(object compressed):
 
     """
     cdef int res
+    cdef cpp_bool bres
     cdef size_t uncompressed_length
     cdef size_t compressed_length
     cdef char* compressed_buf
+    cdef Py_buffer* view
+    cdef char* c_output
 
     if isinstance(compressed, unicode):
         raise TypeError("unicode objects are not accepted")
@@ -74,8 +84,7 @@ cpdef decompress(object compressed):
         return b''
     if not PyObject_CheckBuffer(compressed):
         raise TypeError("compressed does not support the buffer interface")
-    cdef string uncompressed
-    cdef Py_buffer* view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
+    view = <Py_buffer*> PyMem_Malloc(sizeof(Py_buffer))
     if view == NULL:
         raise MemoryError()
     res = PyObject_GetBuffer(compressed, view, PyBUF_SIMPLE)
@@ -85,14 +94,18 @@ cpdef decompress(object compressed):
     try:
         compressed_buf = <char*> view.buf
         compressed_length = view.len
-        if IsValidCompressedBuffer(compressed_buf, compressed_length):
-            GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
-            output = bytearray(uncompressed_length)
-            if RawUncompress(compressed_buf, compressed_length, <char*> output):
-                return output
-            raise RuntimeError("error while uncompressing")
-        raise ValueError("invalid compressed buffer")
+
+        bres = GetUncompressedLength(compressed_buf, compressed_length, &uncompressed_length)
+        if not bres:
+            raise ValueError("parsing error in GetUncompressedLength")
+        output = bytearray(uncompressed_length)
+        c_output = <char*> output
+        with nogil:
+            bres = RawUncompress(compressed_buf, compressed_length, c_output)
+        if not bres:
+            raise ValueError("message looks corrupted in RawUncompress")
+        return output
+
     finally:
         PyBuffer_Release(view)
         PyMem_Free(view)
-
